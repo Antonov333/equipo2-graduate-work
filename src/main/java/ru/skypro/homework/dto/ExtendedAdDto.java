@@ -1,13 +1,9 @@
 package ru.skypro.homework.dto;
 
-/**
- * DTO for extended advertisement
- */
-
 import lombok.Data;
 
 @Data
-public class ExtendedAd {
+public class ExtendedAdDto {
     private Integer pk;
     private String authorFirstName;
     private String authorLastName;
