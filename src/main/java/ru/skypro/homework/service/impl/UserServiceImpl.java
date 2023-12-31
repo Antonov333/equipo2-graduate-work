@@ -3,7 +3,6 @@ package ru.skypro.homework.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AvatarDto;
@@ -17,6 +16,7 @@ import ru.skypro.homework.service.UserService;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -33,9 +33,8 @@ public class UserServiceImpl implements UserService {
         this.imagesRepository = imagesRepository;
     }
 
-    @Value("${path.to.avatars.folder}")
-    private Path pathToAvatars;
-
+    //    @Value("${path.to.avatars.folder}")
+    private final Path pathToAvatars = FileSystems.getDefault().getPath("/avatars");
     public User saveUsers(User user) {
         userRepository.save(user);
         return user;
@@ -75,8 +74,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String saveToDisk(Long studentId, MultipartFile multipartFile) throws IOException {
-
-
         Files.createDirectories(pathToAvatars);
         String originalFilename = multipartFile.getOriginalFilename();
         int dotIndex = originalFilename.lastIndexOf(".");
@@ -92,26 +89,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Images saveToDb(Integer userId, MultipartFile multipartFile, String absolutePath) throws IOException {
         User userReference = userRepository.getReferenceById(userId);
-        //  User userReference = userRepository.getReferenceById(userId);
-        // Student studentReference = studentRepository.getReferenceById(userId);
-        Images images = imagesRepository.findByEmail(String.valueOf(userReference)).orElse(new Images());
-        // Avatar avatar = avatarRepository.findByStudent(studentReference)
-        //       .orElse(new Avatar());
 
-        images.setUserId(userReference.getId());
-        images.setFilePath(absolutePath);
-        images.setMediaType(multipartFile.getContentType());
-        images.setFileSize(multipartFile.getSize());
-        images.setData(multipartFile.getBytes());
-        imagesRepository.save(images);
-        return images;
-        // avatar.setStudent(studentReference);
-        // avatar.setFilePath(absolutePath);
-        //avatar.setMediaType(multipartFile.getContentType());
-        //  avatar.setFileSize(multipartFile.getSize());
-        // avatar.setData(multipartFile.getBytes());
-        //avatarRepository.save(avatar);
-        //return avatar;
+        Images image = imagesRepository.findByUserId(Long.valueOf(userId)).orElse(new Images());
+
+        image.setUserId(userReference.getId());
+        image.setFilePath(absolutePath);
+        image.setMediaType(multipartFile.getContentType());
+        image.setFileSize(multipartFile.getSize());
+        image.setData(multipartFile.getBytes());
+        imagesRepository.save(image);
+        return image;
+
     }
 
 
