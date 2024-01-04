@@ -35,6 +35,11 @@ public class WebSecurityConfig {
             "/register"
     };
 
+    /**
+     *
+     * @param dataSource
+     * @return
+     */
     @Bean
     public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager();

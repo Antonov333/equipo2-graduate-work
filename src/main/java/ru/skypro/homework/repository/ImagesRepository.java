@@ -7,5 +7,5 @@ import ru.skypro.homework.model.User;
 import java.util.Optional;
 
 public interface ImagesRepository extends JpaRepository<Images, Long> {
-    Optional<Images> findByEmail(String email);
+    Optional<Images> findByUserId(Integer userId);
 }

@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
         this.imagesRepository = imagesRepository;
     }
 
-    @Value("${path.to.avatars.folder}")
-    private Path pathToAvatars;
+    @Value("${path.to.images.folder}")
+    private Path pathToImages;
 
     public User saveUsers(User user) {
         userRepository.save(user);
@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
     public String saveToDisk(Long studentId, MultipartFile multipartFile) throws IOException {
 
 
-        Files.createDirectories(pathToAvatars);
+        Files.createDirectories(pathToImages);
         String originalFilename = multipartFile.getOriginalFilename();
         int dotIndex = originalFilename.lastIndexOf(".");
         String extension = originalFilename.substring(dotIndex);
         String fileName = studentId + extension;
-        String absolutePath = pathToAvatars.toAbsolutePath().toFile() + "/" + fileName;
+        String absolutePath = pathToImages.toAbsolutePath().toFile() + "/" + fileName;
         FileOutputStream fos = new FileOutputStream(absolutePath);
         multipartFile.getInputStream().transferTo(fos);
         fos.close();
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         User userReference = userRepository.getReferenceById(userId);
         //  User userReference = userRepository.getReferenceById(userId);
         // Student studentReference = studentRepository.getReferenceById(userId);
-        Images images = imagesRepository.findByEmail(String.valueOf(userReference)).orElse(new Images());
+        Images images = imagesRepository.findByUserId(Integer.valueOf(String.valueOf(userReference))).orElse(new Images());
         // Avatar avatar = avatarRepository.findByStudent(studentReference)
         //       .orElse(new Avatar());
 
