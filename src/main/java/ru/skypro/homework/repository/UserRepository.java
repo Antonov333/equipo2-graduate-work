@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
+
     /**
      * <h2>Find user by email in database. Application considers email as user name for login </h2>
      *
