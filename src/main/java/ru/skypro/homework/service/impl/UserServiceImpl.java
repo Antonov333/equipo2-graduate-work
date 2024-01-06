@@ -9,6 +9,7 @@ import ru.skypro.homework.dto.AvatarDto;
 import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.mapping.UserMapper;
+import ru.skypro.homework.model.Images;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
@@ -56,6 +57,17 @@ public class UserServiceImpl implements UserService {
     public AvatarDto setAvatar(MultipartFile avatar) throws IOException {
         return null;
     }
+
+    @Override
+    public String saveToDisk(Long studentId, MultipartFile multipartFile) throws IOException {
+        return null;
+    }
+
+    @Override
+    public Images saveToDb(Integer userId, MultipartFile multipartFile, String absolutePath) throws IOException {
+        return null;
+    }
+
 
 
 }

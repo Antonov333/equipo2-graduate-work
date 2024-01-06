@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.CommentDto;
@@ -67,6 +68,7 @@ public class CommentsController {
      *           description: Not found <br>
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
+    @Secured("ROLE_ADMIN")
     @PreAuthorize("#userName == authentication.principal.username")
     public ResponseEntity<HttpStatus> deleteComment(
             @PathVariable(name = "adId") long adId,
@@ -94,6 +96,7 @@ public class CommentsController {
      *           description: Not found
      */
     @PreAuthorize("#userName == authentication.principal.username")
+    @Secured("ROLE_ADMIN")
     @PatchMapping("/ads/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable(name = "adId") long adId,

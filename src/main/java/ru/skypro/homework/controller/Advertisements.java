@@ -3,10 +3,13 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,7 @@ import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.NewAdDto;
 import ru.skypro.homework.mapping.AdMapper;
+import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.utils.AdFound;
 import ru.skypro.homework.model.utils.ImageProcessResult;
 import ru.skypro.homework.service.AdvertisementsService;
@@ -29,6 +33,7 @@ import java.security.Principal;
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
+@RequestMapping("/ads")
 public class Advertisements {
 
     private final AdvertisementsService advertisementsService;
@@ -41,7 +46,7 @@ public class Advertisements {
      *
      * @return {@link AdsDto}: list of all advertisements found in repository with number of advertisements
      */
-    @GetMapping("/ads")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdsDto> getAllAds() {
         logger.info("getAllAds invoked");
         return ResponseEntity.ok(advertisementsService.getAll());
@@ -53,11 +58,7 @@ public class Advertisements {
      *
      * @return {@link AdDto}: DTO of added advertisement
      */
-    @PostMapping(value = "/ads"/*, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
-                                                MULTIPART_FORM_DATA,
-                                                MediaType.IMAGE_JPEG_VALUE,
-                                                MediaType.IMAGE_PNG_VALUE,
-                                                MediaType.IMAGE_GIF_VALUE}*/)
+    @PostMapping(value = "/add_ads",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<AdDto> addAd(@RequestBody NewAdDto ad,
                                        Principal principal) throws IOException {
@@ -71,7 +72,7 @@ public class Advertisements {
      * GET /ads/{id} Получение информации об объявлении
      * @return DTO of advertisements with given id
      */
-    @GetMapping("/ads/{id}")
+    @GetMapping(value = "/ads/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdDto> getAds(@PathVariable long id) {
         AdFound adFound = advertisementsService.getAdById(id);
         return new ResponseEntity<>(AdMapper.INSTANCE.adToDto(adFound.getAd()), adFound.getHttpStatus());
@@ -131,7 +132,7 @@ public class Advertisements {
      * @return list of advertisement DTOs
      */
 
-    @GetMapping("/ads/me")
+    @GetMapping(value = "/ads/me",  produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdsDto> getAdsMe(Principal principal) {
         logger.info("User login name: " + principal.getName());
         return advertisementsService.getAdsDtoByUserLoginName(principal.getName());
@@ -145,11 +146,13 @@ public class Advertisements {
      * @param image file with new photo
      * @return updated picture
      */
-    @PatchMapping("/ads/{id}/image")
+    @Secured("ROLE_ADMIN")
+    @PatchMapping(value = "/ads/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> updateImage(@Parameter(name = "id", description = "user identifier")
                                                     @PathVariable(name = "id") long id,
                                               @Parameter(name = "image", description = "file with image")
-                                              @RequestBody MultipartFile image) {
+                                              @RequestBody MultipartFile image, Authentication authentication) {
 
         ImageProcessResult imageProcessResult = advertisementsService.getPhotoByAdId(id);
 

@@ -25,4 +25,6 @@ public interface UserService {
     String saveToDisk(Long studentId, MultipartFile multipartFile) throws IOException;
 
     Images saveToDb(Integer userId, MultipartFile multipartFile, String absolutePath) throws IOException;
+
+
 }

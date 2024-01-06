@@ -75,7 +75,7 @@ public class JavaKidsUserDetailsManager implements UserDetailsManager {
      */
     @Override
     public void updateUser(UserDetails user) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -85,6 +85,7 @@ public class JavaKidsUserDetailsManager implements UserDetailsManager {
      */
     @Override
     public void deleteUser(String username) {
+        throw new UnsupportedOperationException();
 
     }
 
@@ -96,7 +97,7 @@ public class JavaKidsUserDetailsManager implements UserDetailsManager {
      */
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
