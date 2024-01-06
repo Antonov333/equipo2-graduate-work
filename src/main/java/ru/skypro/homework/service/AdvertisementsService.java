@@ -1,6 +1,8 @@
 package ru.skypro.homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import ru.skypro.homework.model.utils.ImageProcessResult;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class AdvertisementsService {
     private final AdRepository adRepository;
     private final UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(AdvertisementsService.class);
 
     /**
      * <h2>getAll()</h2><br>
@@ -56,9 +60,18 @@ public class AdvertisementsService {
      * @param ad DTO ({@link AdDto}) with data to create a new advertisement ({@link ru.skypro.homework.model.Ad} entity)
      * @return DTO of created ad entity
      */
-    public AdDto addNewAd(AdDto ad) {
-        Ad newAd = new Ad(Long.valueOf(ad.getPk()), ad.getAuthor(), ad.getImage(), ad.getPrice(),
-                ad.getTitle());
+    public AdDto addNewAd(CreateOrUpdateAdDto ad, String image, Principal principal) {
+        logger.info("Author login name: " + principal.getName() +
+                "CreateOrUpdateAdDto: " + ad.toString());
+        Ad newAd = AdMapper.INSTANCE.CrOUpdToAd(ad);
+        newAd.setImage(image);
+        Optional<User> authorOptional = userRepository.findByEmail(principal.getName());
+        if (authorOptional.isPresent()) {
+            newAd.setAuthor(Math.toIntExact(authorOptional.get().getId()));
+        } else {
+            newAd.setAuthor(null);
+        }
+        logger.info("newAd: " + newAd.toString());
         newAd = adRepository.save(newAd);
         return AdMapper.INSTANCE.adToDto(newAd);
     }
@@ -132,12 +145,16 @@ public class AdvertisementsService {
         return userOptional.filter(user -> Role.ADMIN.equals(user.getUserRole())).isPresent();
     }
 
-    public ResponseEntity<AdsDto> getAdsDtoByUserId(long id, String userLogin) {
-        if (userRepository.findById((int) id).isEmpty()) {
+    public ResponseEntity<AdsDto> getAdsDtoByUserLoginName(String userLogin) {
+
+        Optional<User> userOptional = userRepository.findByEmail(userLogin);
+        if (userOptional.isEmpty()) {
             return new ResponseEntity<>(new AdsDto(), HttpStatus.NOT_FOUND);
         }
+        User user = userOptional.get();
+        logger.info("getAdsDtoByUserLoginName | user: " + user.toString());
         AdsFound adsFound = new AdsFound();
-        List<Ad> listOfAdvertisements = adRepository.findByAuthor(id);
+        List<Ad> listOfAdvertisements = adRepository.findByAuthor(Math.toIntExact(user.getId()));
         AdsDto adsDto = new AdsDto();
 
         if (listOfAdvertisements.isEmpty()) {
