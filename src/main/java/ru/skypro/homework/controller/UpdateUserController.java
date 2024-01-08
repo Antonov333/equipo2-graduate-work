@@ -18,7 +18,7 @@ public class UpdateUserController {
     }
 
     @PostMapping("/set_info_user")
-    public ResponseEntity<UpdateUserDto> setInformationUser(@RequestBody UpdateUserDto updateUser) {
-        return ResponseEntity.ok(userService.setInfoUser(updateUser));
+    public ResponseEntity<UpdateUserDto> setInformationUser(@RequestBody UpdateUserDto updateUserDto) {
+        return ResponseEntity.ok(userService.setInfoUser(updateUserDto));
     }
 }
