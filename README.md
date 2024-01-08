@@ -4,12 +4,11 @@
 <h3>Backend application for private items resale <br>Бэкенд-приложение для сайта перепродажи частных вещей</h3>
 
 <h3>Team</h3>
-Sergei Antonov
-Vadim Poldolin
-
+Sergei Antonov<br>
+Vadim Poldolin<br>
+<br>
 <h3>Techology Stack</h3>
-Java with Spring Framework for Web, Security, Hibernate features
+Java with Spring Framework for Web, Security, Hibernate features<br>
 Postgres Database, Liquibase DB management
-
-
+<br><br>
 Starting Kit for the project provided by SkyPro online unviversity <br>Материалы для начала работы над проектом предоставлены онлайн университетом SkyPro. 
