@@ -58,16 +58,12 @@ public class User {
     @Column(name = "password")
     @Size(min = 8, max = 16)
     private String password;
-    @Column(name = "data")
-    @Lob
-    @Type(type = "org.hibernate.type.BinaryType")
-    private byte[] data;
 
 
     public User(Integer id, String name,
                 String surname, String phoneNumber,
                 String email, Role userRole,
-                String idImage, String password, byte[] data) {
+                String idImage, String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -76,7 +72,6 @@ public class User {
         this.userRole = userRole;
         this.idImage = idImage;
         this.password = password;
-        this.data = data;
     }
 
 }
