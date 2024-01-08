@@ -5,8 +5,16 @@ databaseChangeLog:
       file: liquibase/scripts/user-database-table.sql
   - include:
       file: liquibase/scripts/ads-database-table2.sql
+  - include :
+      file: liquibase/scripts/ads-database-table3.sql
+  - include :
+      file: liquibase/scripts/ads-database-table4.sql
 
   - include:
       file: liquibase/scripts/images-database-table.sql
   - include:
       file: liquibase/scripts/comment-database-table.sql
+
+
+
+

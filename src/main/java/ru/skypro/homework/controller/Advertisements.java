@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
@@ -21,7 +22,7 @@ import ru.skypro.homework.model.PictureType;
 import ru.skypro.homework.model.utils.AdFound;
 import ru.skypro.homework.model.utils.ImageProcessResult;
 import ru.skypro.homework.repository.ImagesRepository;
-import ru.skypro.homework.service.AdvertisementsService;
+import ru.skypro.homework.service.impl.AdvertisementsServiceImpl;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -35,7 +36,7 @@ import java.security.Principal;
 @RestController
 public class Advertisements {
 
-    private final AdvertisementsService advertisementsService;
+    private final AdvertisementsServiceImpl advertisementsService;
 
     Logger logger = LoggerFactory.getLogger(Advertisements.class);
 
@@ -48,7 +49,7 @@ public class Advertisements {
      *
      * @return {@link AdsDto}: list of all advertisements found in repository with number of advertisements
      */
-    @GetMapping("/ads")
+    @GetMapping(value = "/ads", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdsDto> getAllAds() {
         logger.info("getAllAds invoked");
         return ResponseEntity.ok(advertisementsService.getAll());
@@ -60,7 +61,9 @@ public class Advertisements {
      *
      * @return {@link AdDto}: DTO of added advertisement
      */
-    @PostMapping(value = "/ads", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/ads",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(description = "Добавление нового объявления")
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties") CreateOrUpdateAdDto properties,
@@ -76,7 +79,7 @@ public class Advertisements {
      * GET /ads/{id} Получение информации об объявлении
      * @return DTO of advertisements with given id
      */
-    @GetMapping("/ads/{id}")
+    @GetMapping(value = "/ads/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdDto> getAds(@PathVariable long id) {
         AdFound adFound = advertisementsService.getAdById(id);
         return new ResponseEntity<>(AdMapper.INSTANCE.adToDto(adFound.getAd()), adFound.getHttpStatus());
@@ -95,10 +98,10 @@ public class Advertisements {
      * '404':
      * description: Not found
      */
-    @DeleteMapping("/ads/{id}")
+    @DeleteMapping(value = "/ads/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("#userName == authentication.principal.username")
     public ResponseEntity<HttpStatus> removeAd(@Parameter(name = "id", description = "advertisement identifier")
-                                                   @PathVariable int id, Principal principal) {
+                                                   @PathVariable long id, Principal principal) {
         logger.info("id: " + id + " | User Name: " + principal.getName());
         AdFound adRemoved = advertisementsService.removeAd((long) id, principal.getName());
         return new ResponseEntity<>(adRemoved.getHttpStatus());
@@ -137,7 +140,7 @@ public class Advertisements {
      * @return list of advertisement DTOs
      */
 
-    @GetMapping("/ads/me")
+    @GetMapping(value = "/ads/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdsDto> getAdsMe(Principal principal) {
         logger.info("User login name: " + principal.getName());
         return advertisementsService.getAdsDtoByUserLoginName(principal.getName());
@@ -151,7 +154,8 @@ public class Advertisements {
      * @param image file with new photo
      * @return updated picture
      */
-    @PatchMapping("/ads/{id}/image")
+    @PatchMapping(value = "/ads/{id}/image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> updateImage(@Parameter(name = "id", description = "user identifier")
                                                     @PathVariable(name = "id") long id,
                                               @Parameter(name = "image", description = "file with image")
@@ -161,6 +165,23 @@ public class Advertisements {
 
         return new ResponseEntity<byte[]>(HttpStatus.OK);
 
+    }
+
+    @Operation(summary = "Обновление картинки объявления")
+    @PatchMapping(value = "{id}/image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+    )
+    public ResponseEntity<byte[]> updateImageAd(@PathVariable Integer id,
+                                                @RequestBody MultipartFile image,
+                                                Authentication authentication) throws IOException {
+        if (advertisementsService.updateImageAd(id,image) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (authentication.getName() != null) {
+            return ResponseEntity.ok(advertisementsService.updateImageAd(id, image));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping(value = "/training/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -196,7 +217,6 @@ public class Advertisements {
 
         return ResponseEntity.ok("trainingWithAvatarPicture: " + image.getPictureType());
     }
-
     @GetMapping(value = "/training-with-avatar-picture/{userId}", produces = {MediaType.IMAGE_PNG_VALUE,
             MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*" })
     byte[] viewPicture(@PathVariable Integer userId) {
@@ -205,5 +225,4 @@ public class Advertisements {
         }
         return null;
     }
-
 }

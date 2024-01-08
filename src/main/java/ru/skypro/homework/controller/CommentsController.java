@@ -11,16 +11,17 @@ import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.dto.CommentsDto;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
 import ru.skypro.homework.model.utils.CommentDtoWithHttpStatus;
-import ru.skypro.homework.service.CommentsService;
+import ru.skypro.homework.service.impl.CommentsServiceImpl;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class CommentsController {
-    final private CommentsService commentsService;
+    final private CommentsServiceImpl commentsService;
     /**
      *GET /ads/{id}/comments <h2>Получение комментариев объявления</h2>
      * @param id Advertisement identifier
@@ -46,9 +47,10 @@ public class CommentsController {
     @PostMapping("/ads/{id}/comments")
     @PreAuthorize("#username == authentication.principal.username")
     public ResponseEntity<CommentDto> addComment(@PathVariable(name = "id") int id, Principal principal,
-                                                 @RequestBody CreateOrUpdateCommentDto comment){
+                                                 @RequestBody CreateOrUpdateCommentDto comment, LocalDateTime localDateTime){
         CommentDtoWithHttpStatus commentDtoWithHttpStatus = commentsService.addComment(id, principal.getName(),
                 comment);
+        commentsService.getCurrentTime().adjustInto(localDateTime);//Пытаюсь вереуть настоящие время
         return new ResponseEntity<CommentDto>(commentDtoWithHttpStatus.getCommentDto(),
                 commentDtoWithHttpStatus.getHttpStatus());
     }

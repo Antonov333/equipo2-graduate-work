@@ -1,7 +1,9 @@
 package ru.skypro.homework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -14,7 +16,7 @@ public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long pk;
+    private Integer pk;
 
     @Column(name = "Author")
     private Integer author;
@@ -29,13 +31,19 @@ public class Ad {
     @Column(name = "Title")
     @Size(min = 4, max = 32)
     private String title;
+    @Lob
+    @Type(type="org.hibernate.type.BinaryType")
+    @JsonIgnore
+    @Column(name = "Data")
+    private byte[] data;
 
-    public Ad(Long pk, Integer author, String image, Integer price, String title) {
+    public Ad(Integer pk, Integer author, String image, Integer price, String title, byte[] data) {
         this.pk = pk;
         this.author = author;
         this.image = image;
         this.price = price;
         this.title = title;
+        this.data = data;
     }
     // removed commented out code
 }
