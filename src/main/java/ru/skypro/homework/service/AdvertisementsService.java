@@ -66,13 +66,13 @@ public class AdvertisementsService {
      * @param ad DTO ({@link AdDto}) with data to create a new advertisement ({@link ru.skypro.homework.model.Ad} entity)
      * @return DTO of created ad entity
      */
-    public AdDto addNewAd(CreateOrUpdateAdDto ad, MultipartFile imageFile, Principal principal) {
+    public AdDto addNewAd(CreateOrUpdateAdDto ad, MultipartFile imageSourceFile, Principal principal) {
         logger.info("Author login name: " + principal.getName() +
-                " | CreateOrUpdateAdDto: " + ad.toString() + " | Picture file name: " + imageFile.getName());
+                " | CreateOrUpdateAdDto: " + ad.toString() + " | Picture file name: " + imageSourceFile.getName());
 
         // First, let's create new Ad entity and save to database
         Ad newAd = AdMapper.INSTANCE.CrOUpdToAd(ad);
-        newAd.setImage(imageFile.getName());
+        newAd.setImage(imageSourceFile.getName());
 
         Optional<User> authorOptional = userRepository.findByEmail(principal.getName());
         logger.info("authorOptional is present:" + authorOptional.isPresent());
@@ -89,12 +89,12 @@ public class AdvertisementsService {
                 pictureType(PictureType.ITEM_PICTURE).
                 adId(newAd.getPk()).
                 userId(newAd.getAuthor()).
-                mediaType(imageFile.getContentType()).
-                fileSize(imageFile.getSize()).
+                mediaType(imageSourceFile.getContentType()).
+                fileSize(imageSourceFile.getSize()).
                 build();
 
         try {
-            itemPicture.setData(imageFile.getBytes());
+            itemPicture.setData(imageSourceFile.getBytes());
         } catch (IOException e) {
             logger.info(e.toString());
         }

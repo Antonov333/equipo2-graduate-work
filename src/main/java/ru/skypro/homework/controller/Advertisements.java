@@ -64,10 +64,10 @@ public class Advertisements {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(description = "Добавление нового объявления")
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties") CreateOrUpdateAdDto properties,
-                                       @RequestPart(value = "image") MultipartFile image,
+                                       @RequestPart(value = "image") MultipartFile imageSourceFile,
                                        Principal principal) throws IOException {
         logger.info("addAd method invoked");
-        AdDto newAd = advertisementsService.addNewAd(properties, image, principal);
+        AdDto newAd = advertisementsService.addNewAd(properties, imageSourceFile, principal);
         return new ResponseEntity<>(newAd, HttpStatus.OK);
     }
 
@@ -197,11 +197,11 @@ public class Advertisements {
         return ResponseEntity.ok("trainingWithAvatarPicture: " + image.getPictureType());
     }
 
-    @GetMapping(value = "/training-with-avatar-picture/{userId}", produces = {MediaType.IMAGE_PNG_VALUE,
+    @GetMapping(value = "/training-with-avatar-picture/{pictureId}", produces = {MediaType.IMAGE_PNG_VALUE,
             MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*" })
-    byte[] viewPicture(@PathVariable Integer userId) {
-        if (imagesRepository.findById(Long.valueOf(userId)).isPresent()) {
-            return imagesRepository.findById(userId.longValue()).get().getData();
+    byte[] viewPicture(@PathVariable(name = "pictureId") Integer pictureId) {
+        if (imagesRepository.findById(Long.valueOf(pictureId)).isPresent()) {
+            return imagesRepository.findById(pictureId.longValue()).get().getData();
         }
         return null;
     }
