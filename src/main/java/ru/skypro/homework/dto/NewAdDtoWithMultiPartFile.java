@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class NewAdDto {
-    CreateOrUpdateAdDto properties;
+public class NewAdDtoWithMultiPartFile {
     MultipartFile image;
+    CreateOrUpdateAdDto properties;
 }
