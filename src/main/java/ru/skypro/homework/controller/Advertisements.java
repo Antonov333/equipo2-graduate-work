@@ -154,10 +154,10 @@ public class Advertisements {
     @PatchMapping("/ads/{id}/image")
     public ResponseEntity<byte[]> updateImage(@Parameter(name = "id", description = "user identifier")
                                                     @PathVariable(name = "id") long id,
-                                              @Parameter(name = "image", description = "file with image")
-                                              @RequestBody MultipartFile image) {
+                                              @Parameter(name = "imageFile", description = "file with image")
+                                              @RequestBody MultipartFile imageFile) throws IOException {
 
-        ImageProcessResult imageProcessResult = advertisementsService.getPhotoByAdId(id);
+        ImageProcessResult imageProcessResult = advertisementsService.setAdPicture(id, imageFile);
 
         return new ResponseEntity<byte[]>(HttpStatus.OK);
 

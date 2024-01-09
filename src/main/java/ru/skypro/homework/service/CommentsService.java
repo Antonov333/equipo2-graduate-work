@@ -1,6 +1,8 @@
 package ru.skypro.homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,10 +34,13 @@ public class CommentsService {
     final private CommentRepository commentRepository;
     final private UserRepository userRepository;
     final private AdRepository adRepository;
+    final private Logger logger = LoggerFactory.getLogger(CommentsService.class);
 
-    public CommentsDto findCommentsRelatedToAd(int id) {
+    public CommentsDto findCommentsRelatedToAd(long adId) {
 
-        List<Comment> listOfComments = commentRepository.findByCreatedAt(id);
+        logger.info("findCommentsRelatedToAd | adId: " + adId);
+
+        List<Comment> listOfComments = commentRepository.findByAdId(adId);
 
         CommentsDto commentsDto = new CommentsDto();
 
@@ -66,8 +71,10 @@ public class CommentsService {
             return CommentDtoWithHttpStatus.unAuthorized();
         }
 
-        Comment commentNew = new Comment(0, user.getId(), System.currentTimeMillis(), createOrUpdateCommentDto.getText());
+        Comment commentNew = new Comment(0, user.getId(), System.currentTimeMillis(), createOrUpdateCommentDto.getText(),
+                user.getIdImage(), user.getName(), ad.getPk());
         commentNew = commentRepository.save(commentNew);
+        logger.info("addComment: " + commentNew.toString());
         result.setCommentDto(CommentMapper.INSTANCE.commentToDto(commentNew));
         result.setHttpStatus(HttpStatus.OK);
 

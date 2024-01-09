@@ -72,7 +72,6 @@ public class AdvertisementsService {
 
         // First, let's create new Ad entity and save to database
         Ad newAd = AdMapper.INSTANCE.CrOUpdToAd(ad);
-        newAd.setImage(imageSourceFile.getName());
 
         Optional<User> authorOptional = userRepository.findByEmail(principal.getName());
         logger.info("authorOptional is present:" + authorOptional.isPresent());
@@ -82,7 +81,6 @@ public class AdvertisementsService {
             newAd.setAuthor(null);
         }
         logger.info("newAd: " + newAd.toString());
-        newAd = adRepository.save(newAd);
 
         // Now let's save advertisement picture in database
         Images itemPicture = Images.builder().
@@ -99,9 +97,14 @@ public class AdvertisementsService {
             logger.info(e.toString());
         }
 
-        imagesRepository.save(itemPicture);
+        itemPicture = imagesRepository.save(itemPicture);
+
+        newAd.setImage("/image/" + itemPicture.getId()); // provide image field with the path to endpoint delivering picture
+
+        newAd = adRepository.save(newAd); // save advertisement entity
 
         return AdMapper.INSTANCE.adToDto(newAd);
+
     }
 
 
@@ -248,6 +251,36 @@ public class AdvertisementsService {
         result.setHttpStatus(HttpStatus.NOT_FOUND);
         //todo: fix getPhotoByAdId method in AdvertisementService
         return result;
+    }
+
+    public ImageProcessResult setAdPicture(long adId, MultipartFile imageFile) throws IOException {
+        ImageProcessResult imageProcessResult = new ImageProcessResult();
+
+        Images itemPicture = Images.builder() // Let's make Images entity with item picture
+                .adId(adId)
+                .pictureType(PictureType.ITEM_PICTURE)
+                .data(imageFile.getBytes())
+                .mediaType(imageFile.getContentType())
+                .fileSize(imageFile.getSize())
+                .build();
+
+        itemPicture = imagesRepository.save(itemPicture); // save picture entity in database
+
+        // provide picture id to advertisement entity
+        Optional<Ad> adOpt = adRepository.findById(adId);
+        if (adOpt.isEmpty()) {
+            imageProcessResult.setHttpStatus(HttpStatus.NOT_FOUND);
+            return imageProcessResult;
+        }
+        Ad ad = adOpt.get();
+        ad.setImage("/images/" + itemPicture.getId());
+        adRepository.save(ad); // save updated advertisement entity
+
+        imageProcessResult.setImageId(itemPicture.getId()); // compose returning value
+        imageProcessResult.setImage(itemPicture);
+        imageProcessResult.setHttpStatus(HttpStatus.OK);
+
+        return imageProcessResult;
     }
 }
 
