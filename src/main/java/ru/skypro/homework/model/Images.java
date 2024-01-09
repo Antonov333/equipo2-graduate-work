@@ -25,10 +25,10 @@ public class Images {
     long id;
 
     @Column(name = "user_id")
-    private long userId;
+    private Long userId;
 
     @Column(name = "ad_id")
-    private long adId;
+    private Long adId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "picture_type")
@@ -38,7 +38,7 @@ public class Images {
     private String filePath;
 
     @Column(name = "file_size")
-    private long fileSize;
+    private Long fileSize;
 
     @Column(name = "media_type")
     private String mediaType;
