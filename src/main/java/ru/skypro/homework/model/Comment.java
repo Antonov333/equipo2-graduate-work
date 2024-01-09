@@ -23,20 +23,22 @@ public class Comment {
     private long pk;
 
     @Column(name = "user_id")
-    long userId;
+    long userId; // author of comment id
 
     @Column(name = "created_at")
-    private long createdAt;
+    private long createdAt; // time of creation of comment
 
     @Column(name = "text")
     @Size(min = 8, max = 64)
     private String text;
 
+    @Column(name = "author_image")
+    private String authorImage;
 
-    /*public Comment(Integer pk, long userId, Integer createdAt, String text) {
-        this.pk = pk;
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.text = text;
-    }*/
+    @Column(name = "author_first_name")
+    private String authorFirstName;
+
+    @Column(name = "ad_id")
+    private long adId;
+
 }
