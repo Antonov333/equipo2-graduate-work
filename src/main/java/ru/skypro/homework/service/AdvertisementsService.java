@@ -87,7 +87,6 @@ public class AdvertisementsService {
         // Now let's save advertisement picture in database
         Images itemPicture = Images.builder().
                 pictureType(PictureType.ITEM_PICTURE).
-                adId(newAd.getPk()).
                 userId(newAd.getAuthor()).
                 mediaType(imageSourceFile.getContentType()).
                 fileSize(imageSourceFile.getSize()).
@@ -101,7 +100,7 @@ public class AdvertisementsService {
 
         itemPicture = imagesRepository.save(itemPicture);
 
-        newAd.setImage("/image/" + itemPicture.getId()); // provide image field with the path to endpoint delivering picture
+        newAd.setImage("/images/" + itemPicture.getId()); // provide image field with the path to endpoint delivering picture
 
         newAd = adRepository.save(newAd); // save advertisement entity
 
