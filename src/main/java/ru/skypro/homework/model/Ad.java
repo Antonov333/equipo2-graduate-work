@@ -30,6 +30,10 @@ public class Ad {
     @Size(min = 4, max = 32)
     private String title;
 
+    @ManyToOne
+    @JoinColumn(name = "Author", updatable = false, insertable = false)
+    private User authorEntity;
+
     public Ad(Long pk, Integer author, String image, Integer price, String title) {
         this.pk = pk;
         this.author = author;

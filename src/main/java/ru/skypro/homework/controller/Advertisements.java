@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
+import ru.skypro.homework.dto.ExtendedAdDto;
 import ru.skypro.homework.mapping.AdMapper;
 import ru.skypro.homework.model.Images;
 import ru.skypro.homework.model.PictureType;
@@ -77,9 +78,10 @@ public class Advertisements {
      * @return DTO of advertisements with given id
      */
     @GetMapping("/ads/{id}")
-    public ResponseEntity<AdDto> getAds(@PathVariable long id) {
+    public ResponseEntity<ExtendedAdDto> getAds(@PathVariable long id) {
         AdFound adFound = advertisementsService.getAdById(id);
-        return new ResponseEntity<>(AdMapper.INSTANCE.adToDto(adFound.getAd()), adFound.getHttpStatus());
+        return new ResponseEntity<>(AdMapper.INSTANCE.adToExtendedAdDto(adFound.getAd()),
+                adFound.getHttpStatus());
     }
 
     /**
