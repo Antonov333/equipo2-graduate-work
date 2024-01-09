@@ -148,7 +148,7 @@ public class Advertisements {
      * <h2>PATCH /ads/{id}/image Обновление картинки объявления</h2>
      *
      * @param id advertisement identifier
-     * @param image file with new photo
+     * @param imageFile file with new photo
      * @return updated picture
      */
     @PatchMapping("/ads/{id}/image")

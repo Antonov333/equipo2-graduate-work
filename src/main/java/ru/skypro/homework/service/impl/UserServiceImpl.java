@@ -79,9 +79,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<HttpStatus> setAvatar(MultipartFile avatarSourceFile, Principal principal) throws IOException {
-        String avatarsDir = "/avatars";
+
+        logger.info("setAvatar invoked ");
 
         if (avatarSourceFile == null) {
+            logger.info("setAvatar: avatarSourceFile is null");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -117,4 +119,25 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public ResponseEntity<HttpStatus> updateUser(UpdateUserDto updateUserDto, Principal principal) {
+        logger.info("updateUser | " + updateUserDto.toString() + principal.toString());
+        HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+        if (principal.getName().isEmpty()) {
+            return ResponseEntity.ok(httpStatus);
+        }
+        Optional<User> userOptional = userRepository.findByEmail(principal.getName());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.ok(httpStatus);
+        }
+        User user = userOptional.get();
+        user.setName(updateUserDto.getFirstName());
+        user.setSurname(updateUserDto.getLastName());
+        user.setPhoneNumber(updateUserDto.getPhone());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
 }
+

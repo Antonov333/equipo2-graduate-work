@@ -4,7 +4,16 @@ import lombok.Data;
 
 @Data
 public class UpdateUserDto {
-    private String name;
-    private String surname;
-    private String phoneNumber;
+    private String firstName;
+    private String lastName;
+    private String phone;
 }
+
+/*
+UpdateUser{Jump to definition
+firstName	[...]
+lastName	[...]
+phone	[...]
+
+}
+ */
