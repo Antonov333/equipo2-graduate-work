@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
@@ -125,9 +126,9 @@ public class Advertisements {
     @PreAuthorize("#userName == authentication.principal.username")
     ResponseEntity<AdDto> updateAds(@Parameter(name = "id", description = "advertisement identifier")
                                     @PathVariable long id, @RequestBody CreateOrUpdateAdDto updatedAdContent,
-                                    String userName) {
+                                    Authentication authentication) {
 
-        return advertisementsService.updateAd(id, updatedAdContent, userName);
+        return advertisementsService.updateAd(id, updatedAdContent, authentication.getName());
 
     }
 
