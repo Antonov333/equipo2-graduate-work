@@ -54,6 +54,8 @@ public class AdvertisementsService {
                 .map(AdMapper.INSTANCE::adToDto)
                 .collect(Collectors.toList());
 
+        logger.info(adDtoList.toString());
+
         adsDto.setCount(adDtoList.size());
         adsDto.setResults(adDtoList);
 
