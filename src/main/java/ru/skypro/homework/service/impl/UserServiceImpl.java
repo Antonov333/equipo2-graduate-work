@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = userRepository.findByEmail(principal.getName()).get();
         Images avatarPicture = Images.builder()
-                .userId(user.getId())
+                .userId(user.getId().longValue())
                 .pictureType(PictureType.USER_AVATAR)
                 .mediaType(avatarSourceFile.getContentType())
                 .data(avatarSourceFile.getBytes())

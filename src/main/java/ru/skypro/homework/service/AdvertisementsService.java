@@ -87,7 +87,7 @@ public class AdvertisementsService {
         // Now let's save advertisement picture in database
         Images itemPicture = Images.builder().
                 pictureType(PictureType.ITEM_PICTURE).
-                userId(newAd.getAuthor()).
+                userId(newAd.getAuthor().longValue()).
                 mediaType(imageSourceFile.getContentType()).
                 fileSize(imageSourceFile.getSize()).
                 build();

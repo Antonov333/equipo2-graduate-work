@@ -181,7 +181,7 @@ public class Advertisements {
                                                      @PathVariable("userId") Integer userId) {
         Images image = Images.builder()
                 .pictureType(PictureType.USER_AVATAR)
-                .userId(userId)
+                .userId(userId.longValue())
                 .fileSize(sourceFile.getSize())
                 .mediaType(sourceFile.getContentType())
                 .build();
