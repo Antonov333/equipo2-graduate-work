@@ -101,11 +101,15 @@ public class UserServiceImpl implements UserService {
                 .data(avatarSourceFile.getBytes())
                 .build();
 
-        avatarPicture = imagesRepository.save(avatarPicture);
+        avatarPicture = imagesRepository.save(avatarPicture); // saving avatar...
 
         user.setIdImage("/images/" + avatarPicture.getId());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        user = userRepository.save(user);
+
+        logger.info("setAvatar | " + user.getIdImage());
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private String getExtensions(String fileName) {
