@@ -4,8 +4,8 @@
 <h3>Backend application for private items resale <br>Бэкенд-приложение для сайта перепродажи частных вещей</h3>
 
 <h3>Team</h3>
-Sergei Antonov<br>
-Vadim Poldolin<br>
+Sergei Antonov https://github.com/Antonov333/<br>
+Vadim Poldolin https://github.com/vpold19 <br>
 <br>
 <h3>Techology Stack</h3>
 Java with Spring Framework for Web, Security, Hibernate features<br>
