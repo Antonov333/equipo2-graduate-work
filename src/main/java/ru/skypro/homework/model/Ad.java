@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "ads")
 @Data
+@NoArgsConstructor
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,10 @@ public class Ad {
     @Size(min = 4, max = 32)
     private String title;
 
+    @ManyToOne
+    @JoinColumn(name = "Author", updatable = false, insertable = false)
+    private User authorEntity;
+
     public Ad(Long pk, Integer author, String image, Integer price, String title) {
         this.pk = pk;
         this.author = author;
@@ -35,30 +41,5 @@ public class Ad {
         this.price = price;
         this.title = title;
     }
-
-    /*
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Ad ad = (Ad) o;
-        return Objects.equals(pk, ad.pk) && Objects.equals(author, ad.author) && Objects.equals(image, ad.image) && Objects.equals(price, ad.price) && Objects.equals(title, ad.title);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pk, author, image, price, title);
-    }
-
-    @Override
-    public String toString() {
-        return "Ad{" +
-                "pk=" + pk +
-                ", author=" + author +
-                ", image='" + image + '\'' +
-                ", price=" + price +
-                ", title='" + title + '\'' +
-                '}';
-    }*/
+    // removed commented out code
 }

@@ -12,6 +12,5 @@ public class UserDto {
     private Role userRole;
     private String image;
 
-
 }
 
